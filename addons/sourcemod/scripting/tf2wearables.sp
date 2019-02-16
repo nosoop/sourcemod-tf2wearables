@@ -36,10 +36,11 @@
 #include <sourcemod>
 #include <sdktools>
 
-#define VERSION "1.1.0"
+#pragma semicolon 1
+#pragma newdecls required
 
-public Plugin:myinfo = 
-{
+#define VERSION "1.1.1"
+public Plugin myinfo = {
 	name = "[TF2] Wearable Item Tools",
 	author = "Powerlord",
 	description = "Quick API for dealing with wearable items",
@@ -47,18 +48,18 @@ public Plugin:myinfo =
 	url = "<- URL ->"
 }
 
-new Handle:hGameConf;
-new Handle:hEquipWearable;
-new Handle:hRemoveWearable;
-new Handle:hIsWearable;
-new Handle:hGetEntFromSlot;
+Handle hGameConf;
+Handle hEquipWearable;
+Handle hRemoveWearable;
+Handle hIsWearable;
+Handle hGetEntFromSlot;
 
-public APLRes:AskPluginLoad2(Handle:myself, bool:late, String:error[], err_max)
-{
-	new EngineVersion:version = GetEngineVersion();
+enum TF2LoadoutSlot {};
+
+public APLRes AskPluginLoad2(Handle self, bool late, char[] error, int err_max) {
+	EngineVersion version = GetEngineVersion();
 	
-	if (version != Engine_TF2)
-	{
+	if (version != Engine_TF2) {
 		strcopy(error, err_max, "Only supported on TF2");
 		return APLRes_Failure;
 	}
@@ -73,9 +74,9 @@ public APLRes:AskPluginLoad2(Handle:myself, bool:late, String:error[], err_max)
 	return APLRes_Success;
 }
 
-public OnPluginStart()
-{
-	CreateConVar("tf2wearables_version", VERSION, "Version of TF2 Wearables API", FCVAR_PLUGIN|FCVAR_NOTIFY|FCVAR_DONTRECORD|FCVAR_SPONLY);
+public void OnPluginStart() {
+	CreateConVar("tf2wearables_version", VERSION, "Version of TF2 Wearables API",
+			FCVAR_NOTIFY|FCVAR_DONTRECORD|FCVAR_SPONLY);
 	
 	hGameConf = LoadGameConfigFile("tf2.wearables");
 	
@@ -102,73 +103,59 @@ public OnPluginStart()
 	hGetEntFromSlot = EndPrepSDKCall();
 }
 
-public Native_EquipWearable(Handle:plugin, numParams)
-{
-	new client = GetNativeCell(1);
+public int Native_EquipWearable(Handle plugin, int numParams) {
+	int client = GetNativeCell(1);
 	if (client < 1 || client > MaxClients || !IsClientInGame(client))
 	{
 		ThrowNativeError(SP_ERROR_NATIVE, "Client %d is invalid", client);
 		return;
 	}
 	
-	new wearable = GetNativeCell(2);
-	
-	if (!Internal_IsWearable(wearable))
-	{
+	int wearable = GetNativeCell(2);
+	if (!Internal_IsWearable(wearable)) {
 		ThrowNativeError(SP_ERROR_NATIVE, "%d is not a wearable", wearable);
 	}
 	
 	SDKCall(hEquipWearable, client, wearable);
 }
 
-public Native_RemoveWearable(Handle:plugin, numParams)
-{
-	new client = GetNativeCell(1);
-	if (client < 1 || client > MaxClients || !IsClientInGame(client))
-	{
+public int Native_RemoveWearable(Handle plugin, int numParams) {
+	int client = GetNativeCell(1);
+	if (client < 1 || client > MaxClients || !IsClientInGame(client)) {
 		ThrowNativeError(SP_ERROR_NATIVE, "Client %d is invalid", client);
 		return;
 	}
 	
-	new wearable = GetNativeCell(2);
-
-	if (!Internal_IsWearable(wearable))
-	{
+	int wearable = GetNativeCell(2);
+	if (!Internal_IsWearable(wearable)) {
 		ThrowNativeError(SP_ERROR_NATIVE, "%d is not a wearable", wearable);
 	}
 	
 	SDKCall(hRemoveWearable, client, wearable);
 }
 
-public Native_IsWearable(Handle:plugin, numParams)
-{
-	new entity = GetNativeCell(1);
-	
+public int Native_IsWearable(Handle plugin, int numParams) {
+	int entity = GetNativeCell(1);
 	return Internal_IsWearable(entity);
 }
 
-bool:Internal_IsWearable(entity)
-{
-	if (entity <= MaxClients || !IsValidEntity(entity))
-	{
+bool Internal_IsWearable(int entity) {
+	if (entity <= MaxClients || !IsValidEntity(entity)) {
 		ThrowNativeError(SP_ERROR_NATIVE, "%d is an invalid entity", entity);
 		return false;
 	}
-	
 	return SDKCall(hIsWearable, entity);
 }
 
-public Native_GetLoadoutSlot(Handle:plugin, numParams)
-{
-	new client = GetNativeCell(1);
-	if (client < 1 || client > MaxClients || !IsClientInGame(client))
-	{
+public int Native_GetLoadoutSlot(Handle plugin, int numParams) {
+	int client = GetNativeCell(1);
+	if (client < 1 || client > MaxClients || !IsClientInGame(client)) {
 		ThrowNativeError(SP_ERROR_NATIVE, "Client %d is invalid", client);
 		return -1;
 	}
 	
-	new TF2LoadoutSlot:slot = GetNativeCell(2);
-	new check_wearable = numParams < 3? true : GetNativeCell(3);
+	TF2LoadoutSlot slot = GetNativeCell(2);
+	bool check_wearable = numParams < 3? true : GetNativeCell(3);
 	
 	return SDKCall(hGetEntFromSlot, client, slot, check_wearable);
 }
