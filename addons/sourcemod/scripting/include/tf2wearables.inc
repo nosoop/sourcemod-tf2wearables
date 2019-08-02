@@ -43,7 +43,7 @@
 // This order is taken from g_szLoadoutStringsForDisplay in server_srv.so
 // Frankly, it makes a lot more sense than the version that contains aGrenade
 // since grenades have never existed in TF2
-enum TF2LoadoutSlot {
+enum eTF2LoadoutSlot {
 	TF2LoadoutSlot_Primary,
 	TF2LoadoutSlot_Secondary,
 	TF2LoadoutSlot_Melee,
@@ -68,7 +68,7 @@ enum TF2LoadoutSlot {
 
 // numbered 0 to last slot in TF2LoadoutSlot + 1
 // generally you should use TF2LoadoutSlot directly, this is here for backwards compatibility
-#define TF2_LOADOUT_SLOT_COUNT (view_as<int>(TF2LoadoutSlot))
+#define TF2_LOADOUT_SLOT_COUNT eTF2LoadoutSlot
 
 /**
  * Equip a wearable item on a player
@@ -111,7 +111,7 @@ native bool TF2_IsWearable(int entity);
  * @param include_wearable_weapons		False if wearable items in weapon slots should be ignored
  * @return entity		Entity index; -1 if no item found or if slot contains wearable and include_wearable_weapons is false
  */
-native int TF2_GetPlayerLoadoutSlot(int client, TF2LoadoutSlot slot, bool include_wearable_weapons = true);
+native int TF2_GetPlayerLoadoutSlot(int client, int slot, bool include_wearable_weapons = true);
 
 /**
  * Removes all non-Taunt wearables from a client
@@ -120,7 +120,7 @@ native int TF2_GetPlayerLoadoutSlot(int client, TF2LoadoutSlot slot, bool includ
  * @noreturn
  */
 stock void TF2_RemoveAllWearables(int client) {
-	for (TF2LoadoutSlot i = TF2LoadoutSlot_Misc1; i <= TF2LoadoutSlot_Misc3; i++) {
+	for (eTF2LoadoutSlot i = TF2LoadoutSlot_Misc1; i <= TF2LoadoutSlot_Misc3; i++) {
 		int item = TF2_GetPlayerLoadoutSlot(client, i);
 		if (!IsValidEntity(item)) {
 			continue;
@@ -144,7 +144,7 @@ stock void TF2_RemoveAllWearables(int client) {
  * @noreturn
  */
 stock void TF2_RemoveAllTaunts(int client) {
-	for (TF2LoadoutSlot i = TF2LoadoutSlot_Taunt1; i <= TF2LoadoutSlot_Taunt8; i++) {
+	for (eTF2LoadoutSlot i = TF2LoadoutSlot_Taunt1; i <= TF2LoadoutSlot_Taunt8; i++) {
 		int item = TF2_GetPlayerLoadoutSlot(client, i);
 		if (IsValidEntity(item)) {
 			TF2_RemovePlayerWearable(client, item);
@@ -198,3 +198,6 @@ public void __pl_tf2wearables_SetNTVOptional() {
 	MarkNativeAsOptional("IsWearable");
 	//MarkNativeAsOptional("GetPlayerWearableSlot");
 }
+
+// allow implicit conversion between loadout slots and integers
+#define TF2LoadoutSlot eTF2LoadoutSlot
