@@ -147,7 +147,7 @@ stock void TF2_RemoveAllTaunts(int client) {
 	for (eTF2LoadoutSlot i = TF2LoadoutSlot_Taunt1; i <= TF2LoadoutSlot_Taunt8; i++) {
 		int item = TF2_GetPlayerLoadoutSlot(client, i);
 		if (IsValidEntity(item)) {
-			TF2_RemovePlayerWearable(client, item);
+			TF2_RemoveWearable(client, item);
 			RemoveEntity(item);
 		}
 	}
