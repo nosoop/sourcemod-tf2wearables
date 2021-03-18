@@ -167,6 +167,10 @@ stock void TF2_RemoveWeapon(int client, int weaponIndex) {
 		return;
 	}
 	
+	if (TF2_IsWearable(weaponIndex)) {
+		ThrowError("This function is intended to be used with weapons only.");
+	}
+	
 	// bug #6206
 	// papering over a valve bug where a weapon's extra wearables aren't properly removed from the weapon's owner
 	int extraWearable = GetEntPropEnt(weaponIndex, Prop_Send, "m_hExtraWearable");
