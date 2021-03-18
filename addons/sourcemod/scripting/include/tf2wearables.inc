@@ -167,7 +167,7 @@ stock void TF2_RemoveWeapon(int client, int weaponIndex) {
 		return;
 	}
 	
-	if(TF2_IsWearable(weaponIndex)) {
+	if (TF2_IsWearable(weaponIndex)) {
 		ThrowError("This function is intended to be used with weapons only.");
 	}
 	
