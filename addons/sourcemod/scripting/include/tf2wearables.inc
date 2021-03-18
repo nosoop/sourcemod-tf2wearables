@@ -169,14 +169,18 @@ stock void TF2_RemoveWeapon(int client, int weaponIndex) {
 	
 	// bug #6206
 	// papering over a valve bug where a weapon's extra wearables aren't properly removed from the weapon's owner
-	int extraWearable = GetEntPropEnt(weaponIndex, Prop_Send, "m_hExtraWearable");
-	if (extraWearable != -1) {
-		TF2_RemoveWearable(client, extraWearable);
+	if(HasEntProp(weaponIndex, Prop_Send, "m_hExtraWearable")) {
+		int extraWearable = GetEntPropEnt(weaponIndex, Prop_Send, "m_hExtraWearable");
+		if (extraWearable != -1) {
+			TF2_RemoveWearable(client, extraWearable);
+		}
 	}
 
-	extraWearable = GetEntPropEnt(weaponIndex, Prop_Send, "m_hExtraWearableViewModel");
-	if (extraWearable != -1) {
-		TF2_RemoveWearable(client, extraWearable);
+	if(HasEntProp(weaponIndex, Prop_Send, "m_hExtraWearableViewModel")) {
+		extraWearable = GetEntPropEnt(weaponIndex, Prop_Send, "m_hExtraWearableViewModel");
+		if (extraWearable != -1) {
+			TF2_RemoveWearable(client, extraWearable);
+		}
 	}
 	
 	RemovePlayerItem(client, weaponIndex);
