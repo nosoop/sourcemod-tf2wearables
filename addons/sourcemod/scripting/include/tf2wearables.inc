@@ -106,10 +106,16 @@ native bool TF2_IsWearable(int entity);
 /**
  * Get the entity equipped in a loadout slot
  * 
+ * NOTE: This function is only able to return the first match it finds for
+ * slots considered equivalent (hat / misc), and it also checks that the
+ * item is actually valid for the class.
+ * 
+ * See nosoop/sourcemod-tf2wearables#4 for more details.
+ * 
  * @param client		Client whose item we want
  * @param slot		The slot whose item we want
  * @param include_wearable_weapons		False if wearable items in weapon slots should be ignored
- * @return entity		Entity index; -1 if no item found or if slot contains wearable and include_wearable_weapons is false
+ * @return entity		Entity index; -1 if no item found or if weapon slot contains wearable and include_wearable_weapons is false
  */
 native int TF2_GetPlayerLoadoutSlot(int client, int slot, bool include_wearable_weapons = true);
 
